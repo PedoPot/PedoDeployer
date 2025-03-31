@@ -1,0 +1,9 @@
+services:
+  pedo-connecter:
+    build: ../PedoConnector
+    container_name: pedo-connecter
+    ports:
+      - "9341:9341"
+    volumes:
+      - ../PedoConnector/src:/app/src
+    command: ["fastapi", "run", "/app/src/main.py", "--port", "9341", "--reload"]
