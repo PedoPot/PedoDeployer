@@ -20,7 +20,7 @@ services:
     depends_on:
       - pedo-hunter-ollama
     networks:
-      - pedo-hunter-network
+      - pedo-services-network
 
   pedo-hunter-ollama:
     build:
@@ -38,13 +38,48 @@ services:
     ports:
       - "11469:11434"
     volumes:
-      - ollama_data:/root/.ollama  # Persist Ollama models
+      - ollama_data_haunter:/root/.ollama  # Persist Ollama models
     networks:
-      - pedo-hunter-network
+      - pedo-services-network
+  
+  pedo-meter-api:
+    build:
+      context: ../PedoMeter
+      dockerfile: Dockerfile.api  
+    container_name: pedo-meter-api
+    ports:
+      - "9342:80"
+    environment:
+      - OLLAMA_HOST=http://pedo-meter-ollama:11434  # Points to the ollama service for chat
+    depends_on:
+      - pedo-meter-ollama
+    networks:
+      - pedo-services-network
+
+  pedo-meter-ollama:
+    build:
+      context: ../PedoMeter
+      dockerfile: Dockerfile.ai
+    container_name: pedo-meter-ai
+    # For NVIDIA GPUs, use this :
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    ports:
+      - "114:11434"
+    volumes:
+      - ollama_data_meter:/root/.ollama  # Persist Ollama models
+    networks:
+      - pedo-services-network
 
 networks:
-  pedo-hunter-network:
+  pedo-services-network:
     driver: bridge
 
 volumes:
-  ollama_data:
+  ollama_data_haunter:
+  ollama_data_meter:
