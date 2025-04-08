@@ -1,12 +1,13 @@
 services:
-  pedo-connecter:
+  pedo-connector: &connector
     build: ../PedoConnector
-    container_name: pedo-connecter
+    container_name: pedo-connector
     ports:
       - "9341:9341"
     volumes:
       - ../PedoConnector/src:/app/src
-    command: ["fastapi", "run", "/app/src/main.py", "--port", "9341", "--reload"]
+    command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "9341"]
+
   pedo-hunter-api:
     build:
       context: ../PedoHunter
@@ -20,6 +21,7 @@ services:
       - pedo-hunter-ollama
     networks:
       - pedo-hunter-network
+
   pedo-hunter-ollama:
     build:
       context: ../PedoHunter
