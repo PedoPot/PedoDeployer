@@ -1,12 +1,14 @@
 services:
-  pedo-connector: &connector
+  pedo-connector:
     build: ../PedoConnector
     container_name: pedo-connector
+    environment:
+      - PEDOCONTROLLER_API_URL=https://webhook.site/14762a4c-aca9-4677-b3f9-43ebe9daae5c
     ports:
       - "9341:9341"
     volumes:
-      - ../PedoConnector/src:/app/src
-    command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "9341"]
+      - ../PedoConnector/app:/code/app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9341"]
 
   pedo-hunter-api:
     build:
