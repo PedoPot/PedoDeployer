@@ -6,7 +6,7 @@ services:
       target: dev
     container_name: pedo-observer
     ports:
-      - "9343:3000"
+      - "9340:3000"
     volumes:
       - ../PedObserver:/app:rw
       - /app/node_modules
@@ -24,7 +24,38 @@ services:
       - "9341:9341"
     volumes:
       - ../PedoConnector/app:/code/app
+    networks:
+      - pedo-services-network
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "9341"]
+
+  pedo-controller:
+    build:
+      context: ../PedoController
+      dockerfile: ./Dockerfile.dev
+    container_name: pedo-controller
+    ports:
+      - "9343:8000"
+    volumes:
+      - ../PedoController/PedoController:/app
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    networks:
+      - pedo-services-network
+    depends_on:
+      - pedo-stocker
+
+  pedo-stocker:
+    image: postgres
+    container_name: pedo-stocker
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: PedoStocker
+    ports:
+      - "5432:5432"
+    networks:
+      - pedo-services-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   pedo-hunter-api:
     build:
@@ -101,3 +132,4 @@ networks:
 volumes:
   ollama_data_haunter:
   ollama_data_meter:
+  postgres-data:
