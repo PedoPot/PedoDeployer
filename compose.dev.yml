@@ -1,6 +1,8 @@
 services:
   pedo-connector:
-    build: ../PedoConnector
+    build:
+      context: ../PedoConnector
+      dockerfile: ./Dockerfile.dev
     container_name: pedo-connector
     environment:
       - PEDOCONTROLLER_API_URL=https://webhook.site/14762a4c-aca9-4677-b3f9-43ebe9daae5c
