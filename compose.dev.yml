@@ -1,4 +1,18 @@
 services:
+  pedo-observer:
+    build:
+      context: ../PedObserver
+      dockerfile: ./Dockerfile.dev
+      target: dev
+    container_name: pedo-observer
+    ports:
+      - "9343:3000"
+    volumes:
+      - ../PedObserver:/app:rw
+      - /app/node_modules
+    networks:
+      - pedo-services-network
+
   pedo-connector:
     build:
       context: ../PedoConnector
